@@ -41,6 +41,7 @@ func checkDirectories() {
 		}
 	}
 }
+
 func httpGetReq() []byte {
 	//url fatti in modo hardcoded per semplicita,
 	//converebbe comunque costruirli come si deve?
