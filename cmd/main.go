@@ -85,6 +85,6 @@ func main() {
 		}
 
 		//printing body
-		fmt.Println(len(output))
+		fmt.Println(string(output))
 	}
 }
