@@ -1,4 +1,3 @@
-//finito in 10 minuti
 package main
 
 import (
@@ -7,68 +6,84 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+
+	"tedfeed"
 )
 
 const (
-	tf     = "~/tedfeed"
-	videos = "~/tedfeed/videos"
-	thumbs = "~/tedfeed/thumbnails"
 
+	// setting tedfeed path
+	tf     = "tedfeed"
+	videos = "videos"
+	thumbs = "thumbnails"
+
+	// feeds url
 	url = "https://www.ted.com/talks/atom"
 )
 
 func checkDirectories() {
-	if _, err := os.Stat(tf); err != nil {
-		fmt.Println("cartella", tf, "non trovata, creazione in corso")
-		if err := os.Mkdir(tf, 0755); err != nil {
+	home := os.Getenv("HOME")
+	videosPath := filepath.Join(home, tf, videos)
+	fmt.Println(videosPath)
+
+	if _, err := os.Stat(videosPath); os.IsNotExist(err) {
+		fmt.Println("directory", videos, "not founded, creating...")
+
+		if err := os.MkdirAll(videos, 0755); err != nil {
+			fmt.Println(err)
+		}
+
+	}
+
+	//check tedfeed/thumbs directory
+	//if not exists creating one
+	thumbsPath := filepath.Join(home, tf, thumbs)
+	fmt.Println(thumbsPath)
+	if _, err := os.Stat(thumbsPath); os.IsNotExist(err) {
+		fmt.Println("directory", thumbs, "not founded, creating...")
+
+		if err := os.MkdirAll(thumbs, 0755); err != nil {
 			fmt.Println(err)
 		}
 	}
-
-	if _, err := os.Stat(videos); err != nil {
-		fmt.Println("cartella", videos, "non trovata, creazione in corso")
-		if err := os.Mkdir(videos, 0755); err != nil {
-			fmt.Println(err)
-		}
-	}
-
-	if _, err := os.Stat(thumbs); err != nil {
-		fmt.Println("cartella", thumbs, "non trovata, creazione in corso")
-		if err := os.Mkdir(thumbs, 0755); err != nil {
-			fmt.Println(err)
-		}
-	}
-}
-func httpGetReq() []byte {
-	//url fatti in modo hardcoded per semplicita,
-	//converebbe comunque costruirli come si deve?
-	if resp, err := http.Get(url); err != nil {
-		panic("not found")
-	} else {
-
-		fmt.Println(resp.Status)
-		defer resp.Body.Close()
-
-		var output []byte
-		if output, err = ioutil.ReadAll(resp.Body); err != nil {
-			panic("not found")
-		}
-
-		return output
-	}
-	return nil
 }
 
 func main() {
 
 	checkDirectories()
 
-	fd, err := Parse(httpGetReq())
+	//do http GET request to https://www.ted.com/talks/atom
+	if resp, err := http.Get(url); err != nil {
 
-	if err != nil {
-		log.Fatalln("error parsing the feed")
+		//if connection error
+		log.Fatalf("%s", err)
+
+	} else {
+
+		//if succes
+		fmt.Println(resp.Status)
+
+		//closing res.Body when finished
+		defer resp.Body.Close()
+
+		//read resp contents
+		var output []byte
+		if output, err = ioutil.ReadAll(resp.Body); err != nil {
+			log.Fatalf("%s", err)
+		}
+
+		//parsing output xml string to type feed
+		if fd, err := tedfeed.Parse(output); err != nil {
+
+			//if error occurred
+			log.Fatalln("error parsing the feed")
+
+		} else {
+
+			//if succes
+			fmt.Println(fd.Title)
+
+		}
 	}
-
-	fmt.Println(fd.Title)
-
 }

@@ -1,4 +1,4 @@
-package main
+package tedfeed
 
 type Link struct {
 	Rel  string `xml:"rel,attr"`
