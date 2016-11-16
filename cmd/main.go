@@ -7,6 +7,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"tedfeed"
 )
 
 const (
@@ -63,7 +65,7 @@ func main() {
 
 	checkDirectories()
 
-	fd, err := Parse(httpGetReq())
+	fd, err := tedfeed.Parse(httpGetReq())
 
 	if err != nil {
 		log.Fatalln("error parsing the feed")
