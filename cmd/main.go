@@ -25,19 +25,6 @@ func checkDirectories() {
 	videosPath := filepath.Join(home, tf, videos)
 	fmt.Println(videosPath)
 
-	// //check tedfeed directory
-	// //if not exists creating one
-	// if _, err := os.Stat(home + tf); os.IsNotExist(err) {
-
-	// 	fmt.Println("directory", home+tf, "not founded, creating...")
-	// 	if err := os.Mkdir(tf, 0755); err != nil {
-	// 		fmt.Println(err)
-	// 	}
-	// }
-
-	//check tedfeed/videos directory
-	//if not exists creating one
-
 	if _, err := os.Stat(videosPath); os.IsNotExist(err) {
 		fmt.Println("directory", videos, "not founded, creating...")
 
