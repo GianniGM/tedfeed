@@ -1,9 +1,10 @@
-//finito in 15 minuti
+//finito in 10 minuti
 package main
 
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
 )
@@ -38,7 +39,6 @@ func checkDirectories() {
 		}
 	}
 }
-
 func httpGetReq() []byte {
 	//url fatti in modo hardcoded per semplicita,
 	//converebbe comunque costruirli come si deve?
@@ -63,8 +63,12 @@ func main() {
 
 	checkDirectories()
 
-	output := httpGetReq()
+	fd, err := Parse(httpGetReq())
 
-	fmt.Println(string(output))
+	if err != nil {
+		log.Fatalln("error parsing the feed")
+	}
+
+	fmt.Println(fd.Title)
 
 }
